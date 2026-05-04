@@ -1,4 +1,6 @@
-INFO:     Started server process [16531]
+INFO:     Started server process [77885]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56217 - "POST /upload HTTP/1.1" 415 Unsupported Media Type
+INFO:     127.0.0.1:56225 - "POST /upload HTTP/1.1" 200 OK

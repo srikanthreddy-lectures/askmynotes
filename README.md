@@ -1,6 +1,6 @@
 # AskMyNotes
 
-Day 2 of 9 — backend live, single-port architecture working.
+Day 3 of 9 — PDF upload + text extraction.
 
 ## Run Locally
 

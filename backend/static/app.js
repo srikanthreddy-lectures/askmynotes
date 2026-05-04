@@ -8,7 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const answer     = document.querySelector("#answer");
   const answerText = document.querySelector("#answer-text");
 
+  // Day 3: PDF upload
+  const pdfInput     = document.querySelector("#pdf-input");
+  const uploadStatus = document.querySelector("#upload-status");
+
   askBtn.addEventListener("click", handleAsk);
+  pdfInput.addEventListener("change", handleUpload);
 
   async function handleAsk() {
     const q = question.value.trim();
@@ -40,6 +45,29 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       askBtn.disabled = false;
       askBtn.textContent = oldLabel;
+    }
+  }
+
+  async function handleUpload() {
+    const file = pdfInput.files[0];
+    if (!file) return;
+    uploadStatus.textContent = `Uploading ${file.name}...`;
+    uploadStatus.className = "text-sm text-slate-500";
+    const fd = new FormData();
+    fd.append("file", file);
+    try {
+      const res = await fetch("/upload", { method: "POST", body: fd });
+      if (!res.ok) {
+        const body = await res.text();
+        throw new Error(body);
+      }
+      const data = await res.json();
+      uploadStatus.textContent =
+        `Loaded "${data.filename}" — ${data.pages} pages, ${data.chars.toLocaleString()} characters.`;
+      uploadStatus.className = "text-sm text-emerald-700";
+    } catch (err) {
+      uploadStatus.textContent = `Upload failed: ${err.message}`;
+      uploadStatus.className = "text-sm text-red-600";
     }
   }
 });
