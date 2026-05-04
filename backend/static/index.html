@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AskMyNotes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-4 text-slate-800">AskMyNotes</h1>
+        <div class="flex flex-col gap-4">
+            <input type="text" id="question" placeholder="Ask a question about your notes..." class="border p-2 rounded w-full">
+            <button id="ask-btn" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Ask</button>
+            <div id="status" class="text-sm"></div>
+            <div id="answer" class="hidden mt-4 p-4 bg-slate-50 border rounded">
+                <strong class="block mb-1">Answer:</strong>
+                <div id="answer-text" class="text-slate-700"></div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
