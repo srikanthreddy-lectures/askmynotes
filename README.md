@@ -1,6 +1,6 @@
 # AskMyNotes
 
-Day 5 of 9 — RAG complete, real answers from Groq.
+Day 6 of 9 — question classifier (stub) + UI tag.
 
 ## Run Locally
 

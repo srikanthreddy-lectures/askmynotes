@@ -12,6 +12,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const sourcesWrap = document.querySelector("#sources-wrap");
   const sources     = document.querySelector("#sources");
 
+  // Day 6: Question Type Pill
+  const meta      = document.querySelector("#meta");
+  const qtypePill = document.querySelector("#qtype-pill");
+
+  const COLOR = {
+    definition: "bg-indigo-100 text-indigo-700",
+    example:    "bg-emerald-100 text-emerald-700",
+    comparison: "bg-amber-100 text-amber-700",
+  };
+
   // Day 3: PDF upload
   const pdfInput     = document.querySelector("#pdf-input");
   const uploadStatus = document.querySelector("#upload-status");
@@ -49,6 +59,11 @@ document.addEventListener("DOMContentLoaded", () => {
       answer.classList.remove("hidden");
       answerText.textContent = data.answer;
 
+      // Update question type pill
+      qtypePill.textContent = `type: ${data.question_type}`;
+      qtypePill.className = `px-2 py-1 rounded text-xs ${COLOR[data.question_type] || "bg-slate-200 text-slate-700"}`;
+      meta.classList.remove("hidden");
+
       // Update sources
       sources.innerHTML = "";
       (data.used_chunks || []).forEach((c) => {
@@ -63,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
       status.textContent = err.message || "Something went wrong. Try again.";
       status.className = "text-red-600 mt-2";
       sourcesWrap.classList.add("hidden");
+      meta.classList.add("hidden");
     } finally {
       askBtn.disabled = false;
       askBtn.textContent = oldLabel;

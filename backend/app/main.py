@@ -2,7 +2,7 @@ from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from . import store, pdf_utils, rag, llm
+from . import store, pdf_utils, rag, llm, classifier
 
 BASE_DIR = Path(__file__).resolve().parent.parent   # → backend/
 STATIC_DIR = BASE_DIR / "static"
@@ -15,6 +15,7 @@ class AskRequest(BaseModel):
 class AskResponse(BaseModel):
     answer: str
     used_chunks: list[str]
+    question_type: str
 
 class SearchRequest(BaseModel):
     query: str
@@ -46,6 +47,8 @@ def health():
 async def ask(req: AskRequest):
     if rag.store_size() == 0:
         raise HTTPException(409, "No notes uploaded yet. POST /upload first.")
+    
+    qtype = classifier.classify(req.question)
     top = rag.retrieve(req.question, k=3)
     chunks = [c for c, _ in top]
     context = "\n---\n".join(chunks)
@@ -55,7 +58,7 @@ async def ask(req: AskRequest):
         )
     except llm.GroqError as e:
         raise HTTPException(502, f"LLM call failed: {e}")
-    return AskResponse(answer=answer, used_chunks=chunks)
+    return AskResponse(answer=answer, used_chunks=chunks, question_type=qtype)
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
