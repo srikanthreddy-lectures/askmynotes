@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """Keyword stub classifier. Day 9 replaces this with a remote ML call,
 keeping the same function signature."""
 from __future__ import annotations
@@ -12,3 +13,10 @@ def classify(q: str) -> str:
     if any(k in ql for k in _EX_KW):   return "example"
     if any(k in ql for k in _DEF_KW):  return "definition"
     return "definition"  # safe default
+=======
+def classify(q: str) -> str:
+    """Simple classifier for question types."""
+    # This would normally be an LLM call or a more complex heuristic.
+    # For now, we return a default value to satisfy the Day 7 requirements.
+    return "general"
+>>>>>>> 16517af (day7: tool-routing agent — search_notes + calculator)

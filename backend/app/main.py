@@ -2,7 +2,11 @@ from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+<<<<<<< HEAD
 from . import store, pdf_utils, rag, llm, classifier
+=======
+from . import store, pdf_utils, rag, llm, agent, classifier
+>>>>>>> 16517af (day7: tool-routing agent — search_notes + calculator)
 
 BASE_DIR = Path(__file__).resolve().parent.parent   # → backend/
 STATIC_DIR = BASE_DIR / "static"
@@ -14,6 +18,8 @@ class AskRequest(BaseModel):
 
 class AskResponse(BaseModel):
     answer: str
+    tool_used: str
+    question_type: str
     used_chunks: list[str]
     question_type: str
 
@@ -21,30 +27,13 @@ class SearchRequest(BaseModel):
     query: str
     k: int = 3
 
-GROUNDING_PROMPT = """You are a professional academic summarizer. Your goal is to synthesize the provided notes into a cohesive, natural language response.
-
-STRICT RULES:
-1. DO NOT repeat the same phrases or list items verbatim.
-2. DO NOT echo the notes as a list. 
-3. DO NOT provide a fragmented response.
-4. Synthesize the information into 3-5 full, grammatically correct sentences.
-5. If the notes contain a list or syllabus, describe the overall objective of the course/document rather than listing the modules.
-6. If the notes do not contain enough information to answer the question, say "I cannot find the answer in the provided notes."
-7. Avoid all introductory filler (e.g., "The notes mention..."). Start directly with the answer.
-
-Notes:
-{context}
-
-Question: {question}
-
-Final Answer:"""
-
 @app.get("/health")
 def health():
     return {"ok": True}
 
 @app.post("/ask", response_model=AskResponse)
 async def ask(req: AskRequest):
+<<<<<<< HEAD
     if rag.store_size() == 0:
         raise HTTPException(409, "No notes uploaded yet. POST /upload first.")
     
@@ -52,13 +41,20 @@ async def ask(req: AskRequest):
     top = rag.retrieve(req.question, k=3)
     chunks = [c for c, _ in top]
     context = "\n---\n".join(chunks)
+=======
+    qtype = classifier.classify(req.question)
+>>>>>>> 16517af (day7: tool-routing agent — search_notes + calculator)
     try:
-        answer = await llm.chat(
-            GROUNDING_PROMPT.format(context=context, question=req.question)
-        )
+        tool, answer, chunks = await agent.route(req.question)
     except llm.GroqError as e:
         raise HTTPException(502, f"LLM call failed: {e}")
+<<<<<<< HEAD
     return AskResponse(answer=answer, used_chunks=chunks, question_type=qtype)
+=======
+    return AskResponse(
+        answer=answer, tool_used=tool, question_type=qtype, used_chunks=chunks
+    )
+>>>>>>> 16517af (day7: tool-routing agent — search_notes + calculator)
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):

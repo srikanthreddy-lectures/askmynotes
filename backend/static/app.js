@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const status     = document.querySelector("#status");
   const answer     = document.querySelector("#answer");
   const answerText = document.querySelector("#answer-text");
+  const typePill   = document.querySelector("#type-pill");
+  const toolPill   = document.querySelector("#tool-pill");
 
   // Day 5: Sources panel
   const sourcesWrap = document.querySelector("#sources-wrap");
@@ -59,10 +61,18 @@ document.addEventListener("DOMContentLoaded", () => {
       answer.classList.remove("hidden");
       answerText.textContent = data.answer;
 
+<<<<<<< HEAD
       // Update question type pill
       qtypePill.textContent = `type: ${data.question_type}`;
       qtypePill.className = `px-2 py-1 rounded text-xs ${COLOR[data.question_type] || "bg-slate-200 text-slate-700"}`;
       meta.classList.remove("hidden");
+=======
+      // Update pills
+      typePill.textContent = `type: ${data.question_type}`;
+      typePill.classList.remove("hidden");
+      toolPill.textContent = `tool: ${data.tool_used}`;
+      toolPill.classList.remove("hidden");
+>>>>>>> 16517af (day7: tool-routing agent — search_notes + calculator)
 
       // Update sources
       sources.innerHTML = "";

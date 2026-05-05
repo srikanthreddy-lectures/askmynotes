@@ -1,6 +1,10 @@
 # AskMyNotes
 
+<<<<<<< HEAD
 Day 6 of 9 — question classifier (stub) + UI tag.
+=======
+Day 7 of 9 — agent with two tools.
+>>>>>>> 16517af (day7: tool-routing agent — search_notes + calculator)
 
 ## Run Locally
 
