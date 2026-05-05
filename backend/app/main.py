@@ -2,7 +2,7 @@ from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from . import store, pdf_utils, rag
+from . import store, pdf_utils, rag, llm
 
 BASE_DIR = Path(__file__).resolve().parent.parent   # → backend/
 STATIC_DIR = BASE_DIR / "static"
@@ -14,30 +14,48 @@ class AskRequest(BaseModel):
 
 class AskResponse(BaseModel):
     answer: str
+    used_chunks: list[str]
 
 class SearchRequest(BaseModel):
     query: str
     k: int = 3
+
+GROUNDING_PROMPT = """You are a professional academic summarizer. Your goal is to synthesize the provided notes into a cohesive, natural language response.
+
+STRICT RULES:
+1. DO NOT repeat the same phrases or list items verbatim.
+2. DO NOT echo the notes as a list. 
+3. DO NOT provide a fragmented response.
+4. Synthesize the information into 3-5 full, grammatically correct sentences.
+5. If the notes contain a list or syllabus, describe the overall objective of the course/document rather than listing the modules.
+6. If the notes do not contain enough information to answer the question, say "I cannot find the answer in the provided notes."
+7. Avoid all introductory filler (e.g., "The notes mention..."). Start directly with the answer.
+
+Notes:
+{context}
+
+Question: {question}
+
+Final Answer:"""
 
 @app.get("/health")
 def health():
     return {"ok": True}
 
 @app.post("/ask", response_model=AskResponse)
-def ask(req: AskRequest):
+async def ask(req: AskRequest):
     if rag.store_size() == 0:
-        return AskResponse(answer="Please upload a PDF first.")
-    
-    matches = rag.retrieve(req.question, k=3)
-    if not matches:
-        return AskResponse(answer="No relevant sections found in the notes.")
-    
-    # Format the retrieved chunks as a temporary answer until Day 5 (LLM)
-    formatted_matches = "\n\n".join([
-        f"[Score: {round(score, 4)}]\n{chunk}" 
-        for chunk, score in matches
-    ])
-    return AskResponse(answer=f"Retrieved context:\n\n{formatted_matches}")
+        raise HTTPException(409, "No notes uploaded yet. POST /upload first.")
+    top = rag.retrieve(req.question, k=3)
+    chunks = [c for c, _ in top]
+    context = "\n---\n".join(chunks)
+    try:
+        answer = await llm.chat(
+            GROUNDING_PROMPT.format(context=context, question=req.question)
+        )
+    except llm.GroqError as e:
+        raise HTTPException(502, f"LLM call failed: {e}")
+    return AskResponse(answer=answer, used_chunks=chunks)
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):

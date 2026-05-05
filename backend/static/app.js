@@ -8,6 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const answer     = document.querySelector("#answer");
   const answerText = document.querySelector("#answer-text");
 
+  // Day 5: Sources panel
+  const sourcesWrap = document.querySelector("#sources-wrap");
+  const sources     = document.querySelector("#sources");
+
   // Day 3: PDF upload
   const pdfInput     = document.querySelector("#pdf-input");
   const uploadStatus = document.querySelector("#upload-status");
@@ -34,14 +38,31 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q }),
       });
+
+      if (res.status === 409) {
+        throw new Error("Upload a PDF first.");
+      }
+
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
+
       answer.classList.remove("hidden");
       answerText.textContent = data.answer;
+
+      // Update sources
+      sources.innerHTML = "";
+      (data.used_chunks || []).forEach((c) => {
+        const li = document.createElement("li");
+        li.textContent = c;
+        sources.appendChild(li);
+      });
+      sourcesWrap.classList.remove("hidden");
+
       status.textContent = "";
     } catch (err) {
-      status.textContent = "Something went wrong. Try again.";
+      status.textContent = err.message || "Something went wrong. Try again.";
       status.className = "text-red-600 mt-2";
+      sourcesWrap.classList.add("hidden");
     } finally {
       askBtn.disabled = false;
       askBtn.textContent = oldLabel;
