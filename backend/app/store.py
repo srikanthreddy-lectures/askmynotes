@@ -2,6 +2,8 @@
 Day 3: just the raw text. Day 4 will add chunks + embeddings here.
 """
 
+from . import rag
+
 _doc_text: str = ""
 _filename: str = ""
 
@@ -23,3 +25,4 @@ def clear() -> None:
     global _doc_text, _filename
     _doc_text = ""
     _filename = ""
+    rag.clear()

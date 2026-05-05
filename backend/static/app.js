@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const data = await res.json();
       uploadStatus.textContent =
-        `Loaded "${data.filename}" — ${data.pages} pages, ${data.chars.toLocaleString()} characters.`;
+        `Loaded "${data.filename}" — ${data.pages} pages, ${data.chunks_indexed} chunks indexed.`;
       uploadStatus.className = "text-sm text-emerald-700";
     } catch (err) {
       uploadStatus.textContent = `Upload failed: ${err.message}`;
