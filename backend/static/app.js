@@ -14,10 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const sourcesWrap = document.querySelector("#sources-wrap");
   const sources     = document.querySelector("#sources");
 
-  // Day 6: Question Type Pill
-  const meta      = document.querySelector("#meta");
-  const qtypePill = document.querySelector("#qtype-pill");
-
   const COLOR = {
     definition: "bg-indigo-100 text-indigo-700",
     example:    "bg-emerald-100 text-emerald-700",
@@ -61,18 +57,13 @@ document.addEventListener("DOMContentLoaded", () => {
       answer.classList.remove("hidden");
       answerText.textContent = data.answer;
 
-<<<<<<< HEAD
-      // Update question type pill
-      qtypePill.textContent = `type: ${data.question_type}`;
-      qtypePill.className = `px-2 py-1 rounded text-xs ${COLOR[data.question_type] || "bg-slate-200 text-slate-700"}`;
-      meta.classList.remove("hidden");
-=======
       // Update pills
       typePill.textContent = `type: ${data.question_type}`;
+      typePill.className = `px-2 py-1 rounded text-xs ${COLOR[data.question_type] || "bg-slate-200 text-slate-700"}`;
       typePill.classList.remove("hidden");
+      
       toolPill.textContent = `tool: ${data.tool_used}`;
       toolPill.classList.remove("hidden");
->>>>>>> 16517af (day7: tool-routing agent — search_notes + calculator)
 
       // Update sources
       sources.innerHTML = "";
@@ -88,7 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
       status.textContent = err.message || "Something went wrong. Try again.";
       status.className = "text-red-600 mt-2";
       sourcesWrap.classList.add("hidden");
-      meta.classList.add("hidden");
+      typePill.classList.add("hidden");
+      toolPill.classList.add("hidden");
     } finally {
       askBtn.disabled = false;
       askBtn.textContent = oldLabel;
